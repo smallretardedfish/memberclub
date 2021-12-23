@@ -36,7 +36,7 @@ func (s *Server) HandleNewMember(w http.ResponseWriter, r *http.Request) {
 	err = s.userRepo.InsertNewMember(memberToCome)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusConflict)
 		return
 	}
 	fmt.Println(s.userRepo)

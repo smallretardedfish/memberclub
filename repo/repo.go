@@ -21,8 +21,10 @@ func (ur UserRepo) Size() int {
 	return len(ur.userMap)
 }
 func NewRepo() *UserRepo {
-	return &UserRepo{}
+	m := make(map[string]interface{})
+	return &UserRepo{m}
 }
-func (ur *UserRepo) String() string {
-	return fmt.Sprintf("", ur.userMap)
-}
+
+//func (ur *UserRepo) String() string {
+//	return fmt.Sprintf("", ur.userMap)
+//}
