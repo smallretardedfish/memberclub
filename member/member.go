@@ -7,7 +7,9 @@ type Member interface {
 	GetMemberName() string
 	GetUserCreationDate() time.Time
 }
-
+type MemberJSON struct {
+	member
+}
 type member struct {
 	Name         string    `json:"name"`
 	Email        string    `json:"email"`

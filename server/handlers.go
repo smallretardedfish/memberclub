@@ -4,11 +4,23 @@ import (
 	"MemberClub/member"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 )
 
+func (s *Server) HandleIndex(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("index.html"))
+	err := tmpl.Execute(w, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+}
 func (s *Server) HandleNewMember(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("index.html"))
+
 	body := r.Body
 	data := map[string]string{}
 	err := json.NewDecoder(body).Decode(&data)
@@ -30,14 +42,21 @@ func (s *Server) HandleNewMember(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+			return
 		}
+
 	}
 	memberToCome := member.NewMember(data["name"], data["email"])
-	err = s.userRepo.InsertNewMember(memberToCome)
+	err = s.userRepo.InsertNewMember(data["email"], memberToCome)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
-	fmt.Println(s.userRepo)
+	err = tmpl.Execute(w, s.userRepo)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	fmt.Println(s.userRepo, s.userRepo.Size())
 }

@@ -13,10 +13,10 @@ import (
 type Server struct {
 	ctx      context.Context
 	router   *mux.Router
-	userRepo *repo.UserRepo
+	userRepo repo.UserRepo
 }
 
-func Init(ctx context.Context, router *mux.Router, userRepo *repo.UserRepo) *Server {
+func Init(ctx context.Context, router *mux.Router, userRepo repo.UserRepo) *Server {
 	s := &Server{
 		ctx:      ctx,
 		router:   router,

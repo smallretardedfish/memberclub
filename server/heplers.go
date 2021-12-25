@@ -19,12 +19,10 @@ func Validation(pair ValidationPair) bool {
 		if err != nil {
 			return false
 		}
-
 	case "name":
-		name.MatchString(pair.Value)
+		return name.MatchString(pair.Value)
 	default:
 		return false
 	}
-
 	return true
 }

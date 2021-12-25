@@ -2,5 +2,5 @@ package server
 
 func (s *Server) routes() {
 	s.router.HandleFunc("/member", s.HandleNewMember).Methods("POST")
-	//s.router.HandleFunc("/",s.HandleIndex)
+	s.router.HandleFunc("/", s.HandleIndex).Methods("GET")
 }
