@@ -8,6 +8,7 @@ import (
 
 type UserRepo interface {
 	InsertNewMember(string, interface{}) error
+	GetAllMembers() interface{}
 	Size() int
 }
 
@@ -30,6 +31,15 @@ func (ur *userRepo) InsertNewMember(email string, mem interface{}) error {
 }
 func (ur *userRepo) Size() int {
 	return len(ur.userMap)
+}
+func (ur *userRepo) GetAllMembers() interface{} {
+	//jsonCompatibleMap := make(map[string]member.Member{})
+	//for key, val := range ur.userMap {
+	//	jsonCompatibleMap[key] = member.MemberJSON{Mem: val}
+	//}
+	//
+	//return jsonCompatibleMap
+	return ur.userMap
 }
 func NewRepo() *userRepo {
 	m := make(map[string]interface{})

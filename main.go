@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 )
@@ -16,11 +17,20 @@ func main() {
 	userRepository := repo.NewRepo()
 	serv := server.Init(ctx, router, userRepository)
 
-	var addr = ":80"
+	var addr = ":8080"
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"POST", "GET", "PUT", "DELETE", "OPTIONS"},
+		AllowCredentials: true,
+	})
+	handler := c.Handler(serv)
 
-	fmt.Println("Listening and serving on address", addr)
-	err := http.ListenAndServe(addr, serv)
-	if err != nil {
+	httpServer := &http.Server{
+		Addr:    addr,
+		Handler: handler,
+	}
+	fmt.Printf("staring web server on %s\n", addr)
+	if err := httpServer.ListenAndServe(); err != nil {
 		log.Fatalln(err)
 	}
 }

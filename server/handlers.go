@@ -4,22 +4,14 @@ import (
 	"MemberClub/member"
 	"encoding/json"
 	"fmt"
-	"html/template"
+	"github.com/tidwall/gjson"
 	"log"
 	"net/http"
 )
 
-func (s *Server) HandleIndex(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("index.html"))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-}
 func (s *Server) HandleNewMember(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("index.html"))
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Method", "true")
 
 	body := r.Body
 	data := map[string]string{}
@@ -44,7 +36,6 @@ func (s *Server) HandleNewMember(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
-
 	}
 	memberToCome := member.NewMember(data["name"], data["email"])
 	err = s.userRepo.InsertNewMember(data["email"], memberToCome)
@@ -53,10 +44,30 @@ func (s *Server) HandleNewMember(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
-	err = tmpl.Execute(w, s.userRepo)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fmt.Println(s.userRepo, s.userRepo.Size())
+	userTable, err := json.Marshal(s.userRepo.GetAllMembers())
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(string(userTable))
+}
+
+func (s *Server) FetchAllMembers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Method", "true")
+	userTable := s.userRepo.GetAllMembers()
+	table, err := json.Marshal(userTable)
+	res := gjson.GetBytes(table, "@values").Value()
+	err = json.NewEncoder(w).Encode(res)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(res)
 }
