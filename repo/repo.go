@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepo interface {
-	InsertNewMember(string, interface{}) error
+	InsertNewMember(interface{}) error
 	GetAllMembers() interface{}
 	Size() int
 }
@@ -16,13 +16,14 @@ type userRepo struct {
 	userMap map[string]interface{}
 }
 
-func (ur *userRepo) InsertNewMember(email string, mem interface{}) error {
+func (ur *userRepo) InsertNewMember(mem interface{}) error {
 	newMember, ok := mem.(member.Member)
 	if !ok {
-		err := fmt.Errorf("got data of type %T but wanted memmer.Member", newMember)
+		err := fmt.Errorf("got data of type %T but wanted member.Member", newMember)
 		log.Println(err)
 		return err
 	}
+	email := newMember.GetMemberEmail()
 	if _, present := ur.userMap[email]; present {
 		return fmt.Errorf("this email is already taken")
 	}
@@ -33,21 +34,10 @@ func (ur *userRepo) Size() int {
 	return len(ur.userMap)
 }
 func (ur *userRepo) GetAllMembers() interface{} {
-	//jsonCompatibleMap := make(map[string]member.Member{})
-	//for key, val := range ur.userMap {
-	//	jsonCompatibleMap[key] = member.MemberJSON{Mem: val}
-	//}
-	//
-	//return jsonCompatibleMap
+
 	return ur.userMap
 }
 func NewRepo() *userRepo {
 	m := make(map[string]interface{})
 	return &userRepo{m}
 }
-
-var test UserRepo = NewRepo()
-
-//func (ur *UserRepo) String() string {
-//	return fmt.Sprintf("", ur.userMap)
-//}

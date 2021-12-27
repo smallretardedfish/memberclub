@@ -20,7 +20,7 @@ func main() {
 	var addr = ":8080"
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"POST", "GET", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods:   []string{"POST", "GET"},
 		AllowCredentials: true,
 	})
 	handler := c.Handler(serv)

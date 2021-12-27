@@ -9,9 +9,6 @@ type Member interface {
 	GetMemberName() string
 	GetMemberCreationDate() time.Time
 }
-type MemberJSON struct {
-	Mem member
-}
 
 type member struct {
 	Name         string    `json:"name"`

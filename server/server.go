@@ -25,7 +25,7 @@ func Init(ctx context.Context, router *mux.Router, userRepo repo.UserRepo) *Serv
 	s.routes()
 	return s
 }
-func (s *Server) respond(w http.ResponseWriter, r *http.Request, data interface{}, statusCode int) error {
+func (s *Server) respond(w http.ResponseWriter, data interface{}, statusCode int) error {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	if data != nil {
