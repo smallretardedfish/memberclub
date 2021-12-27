@@ -1,0 +1,23 @@
+.App {
+    padding: 0 50px;
+}
+h1, h3 {
+    text-align: center;
+}
+.add-form {
+    row-gap: 20px;
+}
+.fields {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+.buttons {
+    display: flex;
+    column-gap:20px;
+    margin-top:20px;
+    padding: 0 40px;
+}
+table {
+    margin: auto;
+}
