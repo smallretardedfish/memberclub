@@ -1,11 +1,13 @@
 package member
 
-import "time"
+import (
+	"time"
+)
 
 type Member interface {
 	GetMemberEmail() string
 	GetMemberName() string
-	GetUserCreationDate() time.Time
+	GetMemberCreationDate() time.Time
 }
 
 type member struct {
@@ -22,9 +24,10 @@ func (m *member) GetMemberName() string {
 	return m.Name
 }
 
-func (m *member) GetUserCreationDate() time.Time {
+func (m *member) GetMemberCreationDate() time.Time {
 	return m.CreationTime
 }
+
 func NewMember(name, email string) *member {
 	return &member{
 		Name:         name,

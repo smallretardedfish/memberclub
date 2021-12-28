@@ -3,7 +3,7 @@ package server
 import (
 	"MemberClub/member"
 	"encoding/json"
-	"fmt"
+	"github.com/tidwall/gjson"
 	"log"
 	"net/http"
 )
@@ -22,7 +22,7 @@ func (s *Server) HandleNewMember(w http.ResponseWriter, r *http.Request) {
 			Value:             value,
 		})
 		if !valid {
-			err := s.respond(w, r, map[string]string{
+			err := s.respond(w, map[string]string{
 				"message": "invalid input",
 			}, http.StatusBadRequest)
 			if err != nil {
@@ -30,14 +30,30 @@ func (s *Server) HandleNewMember(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+			return
 		}
 	}
 	memberToCome := member.NewMember(data["name"], data["email"])
 	err = s.userRepo.InsertNewMember(memberToCome)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+	if err != nil {
+		log.Println(err)
+		return
+	}
+}
+
+func (s *Server) FetchAllMembers(w http.ResponseWriter, r *http.Request) {
+	userTable := s.userRepo.GetAllMembers()
+	table, err := json.Marshal(userTable)
+	res := gjson.GetBytes(table, "@values").Value()
+	err = json.NewEncoder(w).Encode(res)
+	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(s.userRepo)
 }

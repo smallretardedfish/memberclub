@@ -2,6 +2,7 @@ package server
 
 import (
 	"MemberClub/repo"
+	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"log"
@@ -10,24 +11,30 @@ import (
 )
 
 type Server struct {
+	ctx      context.Context
 	router   *mux.Router
-	userRepo *repo.UserRepo
+	userRepo repo.UserRepo
 }
 
-func Init(router *mux.Router, userRepo *repo.UserRepo) *Server {
+func Init(ctx context.Context, router *mux.Router, userRepo repo.UserRepo) *Server {
 	s := &Server{
+		ctx:      ctx,
 		router:   router,
 		userRepo: userRepo,
 	}
 	s.routes()
 	return s
 }
-func (s *Server) respond(w http.ResponseWriter, r *http.Request, data interface{}, statusCode int) error {
+func (s *Server) respond(w http.ResponseWriter, data interface{}, statusCode int) error {
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	err := json.NewEncoder(w).Encode(data)
-	if err != nil {
-		log.Println(err, time.Now())
-		return err
+	if data != nil {
+		err := json.NewEncoder(w).Encode(data)
+		if err != nil {
+			log.Println(err, time.Now())
+			w.WriteHeader(http.StatusInternalServerError)
+			return err
+		}
 	}
 	return nil
 }
